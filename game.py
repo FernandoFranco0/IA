@@ -63,12 +63,12 @@ class Game:
         #action1 = (0,0)
         # iterate until game is over
         while True:
-            
+
             # execute oldAction, observe reward and state
             self.board[action1[0]][action1[1]] = 'O'
-            
+
             check = self.checkForEnd('O')
-            
+
             if not check == -1:
                 # game is over. +1 reward if win, 0 if draw
                 reward = check * 1000
@@ -83,7 +83,7 @@ class Game:
             firstIt = False
 
             state2 = getStateKey(self.board)
-            action2 = self.agent2.getAction(state2)
+            action2 = self.agent2.getAction(state2, False)
             self.board[action2[0]][action2[1]] = 'X'
 
             check = self.checkForEnd('X')
@@ -96,17 +96,17 @@ class Game:
             else:
                 # game continues. 0 reward
                 reward = 0
-            
+
             newState = getStateKey(self.board)
 
             # update Q-values
             self.agent.update(state1, newState, action1, reward)
 
             state1 = newState
-            action1 = self.agent.getAction(state1)
+            action1 = self.agent.getAction(state1, False)
 
         # Game over. Perform final update
-        
+
         self.agent.update(state1, None, action1, reward)
 
         self.agent2.update(state2, None, action2, -reward)
@@ -116,7 +116,7 @@ class Game:
     def play(self, print : bool):
         move = 1
         state1 = getStateKey(self.board)
-        action1 = self.agent.getAction(state1)
+        action1 = self.agent.getAction(state1, True)
 
         while True:
             
@@ -136,7 +136,7 @@ class Game:
                 break
 
             state2 = getStateKey(self.board)
-            action2 = self.agent2.getAction(state2)
+            action2 = self.agent2.getAction(state2, True)
             self.board[action2[0]][action2[1]] = 'X'
 
             check = self.checkForEnd('X')
@@ -156,7 +156,7 @@ class Game:
 
             # update Q-values
             state1 = newState
-            action1 = self.agent.getAction(state1)
+            action1 = self.agent.getAction(state1, True)
 
         # Game over. Perform final update
         

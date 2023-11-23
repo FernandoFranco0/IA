@@ -18,7 +18,7 @@ class Q:
         self.Q = {}
 
 
-    def getAction(self, state : str):
+    def getAction(self, state : str, p):
         """
         Select an action given the current game state.
         """
@@ -46,7 +46,9 @@ class Q:
                 # If unique max action, select that one
                 ix_select = ix_max[0]
             action = possibleActions[ix_select]
-
+        
+        if p:
+            print(self.Q[state])
         return action
     
     def update(self, oldState : str, newState : str, action : tuple[int, int], reward : int):
@@ -81,3 +83,5 @@ class Q:
         else:
             # terminal state update
             self.Q[oldState][action] = reward
+
+            '----X--OO'
