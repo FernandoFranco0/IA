@@ -1,10 +1,10 @@
 import random
-from q import Q
+
+from q2 import Q2
 
 class Game:
-    def __init__(self, agent : Q, agent2 : Q):
+    def __init__(self, agent : Q2):
         self.agent = agent
-        self.agent2 = agent2
         # initialize the game board
         self.board = [['-', '-', '-'], ['-', '-', '-'], ['-', '-', '-']]
 
@@ -57,13 +57,11 @@ class Game:
         return -1000
 
     def training(self):
-        firstIt = True
-        state1 = getStateKey(self.board)
-        action1 = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1), (2,2)][random.randint(0,8)]
-        #action1 = (0,0)
+        playerTurn = 1
+        state = getStateKey(self.board)
+        self.agent.getAction(state, playerTurn)
         # iterate until game is over
         while True:
-
             # execute oldAction, observe reward and state
             self.board[action1[0]][action1[1]] = 'O'
 
@@ -198,5 +196,3 @@ def getStateKey(board):
         for elt in row:
             key += elt
     return key
-
-#printBoard('OXXOOXXO-')

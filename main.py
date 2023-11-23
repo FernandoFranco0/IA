@@ -47,16 +47,16 @@ def playing( games : int, agente1 : Q, agente2 : Q , board : bool):
     print()
 
 # training
-agente1 = Q( 0.5, 1, 1 )  
-agente2 = Q( 0.5, 1, 1 )  
+agente1 = Q( 0.01, 0.5, 1 )  
+agente2 = Q( 0.01, 0.5, 1 )  
 
 print(f"a1 : alpha : {agente1.alpha} gamma : {agente1.gamma} epsilon : {agente1.eps}")
 print(f"a2 : alpha : {agente2.alpha} gamma : {agente2.gamma} epsilon : {agente2.eps}")
 
-games = 10000
+games = 100000
 training( games, agente1, agente2 )
 #print("Invertendo ordem de jogadas",end="\n\n")
 #training( games, agente2, agente1 )
 
 print("Fazendo melhor jogada sempre", end="\n\n")
-playing( 1, agente1, agente2 , True )
+playing( 100, agente1, agente2 , False )
