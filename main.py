@@ -1,62 +1,46 @@
-from game import Game
-from q import Q
+from game2 import Game
+from q2 import Q2
+from td import TD
 
-def training( games : int, agente1 : Q, agente2 : Q ):
+def play( games : int, agente : Q2,  human ):
     a1 = 0
     a2 = 0
     d = 0
 
     for _ in range(games):
-        game = Game(agente1, agente2)
-        result = game.training()
-        if result == 1000:
-            a1 += 1
-        elif result == -1000:
-            a2 += 1
-        else:
+        game = Game(agente)
+        result,player = game.training( human )
+        if result == 100 or result == 400:
             d += 1
+        elif result == 1000 and player == 1:
+            a1 += 1
+        else:
+            a2 += 1
+        if human == 1:
+            human = 2
+        elif human == 2:
+            human = 1
 
     print(f"Vitorias a1 {a1/games}")
     print(f"Vitorias a2 {a2/games}")
     print(f"Empates {d/games}")
     print()
 
-def playing( games : int, agente1 : Q, agente2 : Q , board : bool):
-    #playing
-    agente1.eps = 0
-    agente2.eps = 0
-    a1 = 0
-    a2 = 0
-    d = 0
-    for i in range(games):
-        game = Game(agente1, agente2)
-        result = game.play( board )
-        if result == 1000:
-            a1 += 1
-        elif result == -1000:
-            a2 += 1
-        else:
-            d += 1
-# o o -
-# x x -
-# x 0 -
-    print("playing results")
-    print(f"Vitorias a1 {a1}")
-    print(f"Vitorias a2 {a2}")
-    print(f"Empates {d}")
-    print()
-
 # training
-agente1 = Q( 0.01, 0.5, 1 )  
-agente2 = Q( 0.01, 0.5, 1 )  
+agente = Q2( 0.1, 1, 1 )
 
-print(f"a1 : alpha : {agente1.alpha} gamma : {agente1.gamma} epsilon : {agente1.eps}")
-print(f"a2 : alpha : {agente2.alpha} gamma : {agente2.gamma} epsilon : {agente2.eps}")
+tdAgent = TD( 0.1, 1,1 )
+  
+print(f"a1 : alpha : {agente.alpha} gamma : {agente.gamma} epsilon : {agente.eps}")
 
-games = 100000
-training( games, agente1, agente2 )
-#print("Invertendo ordem de jogadas",end="\n\n")
-#training( games, agente2, agente1 )
+play( 300000, tdAgent, 3 )
 
-print("Fazendo melhor jogada sempre", end="\n\n")
-playing( 100, agente1, agente2 , False )
+
+# playinh
+tdAgent.eps = 0
+
+play( 100000, tdAgent, 3 )
+
+
+
+

@@ -1,7 +1,7 @@
 import random
 
 class Q2:
-    def __init__(self, alpha : float, gamma : float, eps : float, epsDecay=0.):
+    def __init__(self, alpha : float, gamma : float, eps : float, epsDecay=0.001):
         # Agent parameters
         self.alpha = alpha
         self.gamma = gamma
@@ -14,7 +14,7 @@ class Q2:
                 self.actions.append((i,j))
         # Initialize Q values to 0 for all state-action pairs.
         # Access value for action a, state s via Q[a][s]
-        self.Q = {"1" : {}, "2" : {}}
+        self.Q = {1 : {}, 2 : {}}
 
     def getAction(self, state : str, playerNum : int, p : bool = False):
         """
@@ -22,13 +22,13 @@ class Q2:
         """
         possibleActions = [a for a in self.actions if state[a[0]*3 + a[1]] == '-']
         
-        if state not in self.Q:
+        if state not in self.Q[playerNum]:
             self.Q[playerNum][state] = {}
             for action in possibleActions:
-                self.Q[state][action] = 0
+                self.Q[playerNum][state][action] = 0
 
         # Only consider the allowed actions (empty board spaces)
-
+        # 2 , 1
         if random.random() < self.eps:
             # Random choose.
             action = possibleActions[random.randint(0,len(possibleActions)-1)]
@@ -36,10 +36,17 @@ class Q2:
             # Greedy choose.
             values = [self.Q[playerNum][state][a] for a in possibleActions]
             # Find location of max
-            ix_max = [v for v in values if v == max(values)]
+
+            ix_max = []
+
+            for i in range( len(possibleActions) ):
+                if self.Q[playerNum][state][possibleActions[i]] == max(values):
+                    ix_max.append(i)
+
             if len(ix_max) > 1:
                 # If multiple actions were max, then sample from them
-                ix_select = ix_max[random.randint(0, len(ix_max))]
+                index = random.randint(0, len(ix_max) - 1)
+                ix_select = ix_max[index]
             else:
                 # If unique max action, select that one
                 ix_select = ix_max[0]
@@ -60,23 +67,24 @@ class Q2:
             if oldState not in self.Q[playerNum]:
                 possibleActions = [a for a in self.actions if oldState[a[0]*3 + a[1]] == '-']
                 self.Q[playerNum][oldState] = {}
-                for action in possibleActions:
-                    self.Q[playerNum][oldState][action] = 0
+                for act in possibleActions:
+                    self.Q[playerNum][oldState][act] = 0
 
             if newState not in self.Q[playerNum]:
                 possibleActions = [a for a in self.actions if newState[a[0]*3 + a[1]] == '-']
                 self.Q[playerNum][newState] = {}
-                for action in possibleActions:
-                    self.Q[playerNum][newState][action] = 0
+                for act in possibleActions:
+                    self.Q[playerNum][newState][act] = 0
 
 
             possibleActions = [a for a in self.actions if newState[a[0]*3 + a[1]] == '-']
-            QValues = [self.Q[playerNum][newState][action] for action in possibleActions]
+            QValues = [self.Q[playerNum][newState][act] for act in possibleActions]
             
             # update
-            sample = reward + self.gamma * max(QValues)
+            sample = reward + self.gamma * (max(QValues) if len(QValues) > 0 else 0)
             self.Q[playerNum][oldState][action] = ( 1 - self.alpha ) * self.Q[playerNum][oldState][action] + self.alpha * sample
 
         else:
             # terminal state update
             self.Q[playerNum][oldState][action] = reward
+        

@@ -56,113 +56,65 @@ class Game:
             return 0
         return -1000
 
-    def training(self):
-        playerTurn = 1
-        state = getStateKey(self.board)
-        self.agent.getAction(state, playerTurn)
+    def training(self, humam):
+        playerNum = 1
+        opponentNum = 2
+        move = 1
+
         # iterate until game is over
         while True:
-            # execute oldAction, observe reward and state
-            self.board[action1[0]][action1[1]] = 'O'
 
-            check = self.checkForEnd('O')
-
-            if not check == -1:
-                # game is over. +1 reward if win, 0 if draw
-                reward = check
-                break
+            state = getStateKey(self.board)
+            if playerNum != humam:
+                action = self.agent.getAction(state, playerNum)
             else:
-                reward = 0
-
-            if not firstIt:
-                newState2 = getStateKey(self.board)
-                
-
-            firstIt = False
-
-            state2 = getStateKey(self.board)
-            action2 = self.agent2.getAction(state2, False)
-            self.board[action2[0]][action2[1]] = 'X'
-
-            check = self.checkForEnd('X')
-
-            if not check == -1:
-                # game is over. -1 reward if lose, 0 if draw
-                reward = -1*check
-                #print( "Draw" if check == 0 else "Agent2 won" )
-                break
-            else:
-                # game continues. 0 reward
-                reward = 0
-
-            newState = getStateKey(self.board)
-
-            # update Q-values
-            self.agent.update(state1, newState, action1, reward)
-            self.agent2.update(state2, newState, action2, -reward)
-
-            state1 = newState
-            action1 = self.agent.getAction(state1, False)
-
-        # Game over. Perform final update
-
-        self.agent.update(state1, None, action1, reward)
-
-        self.agent2.update(state2, None, action2, -reward)
-
-        return reward
+                printBoard(state, move)
+                x = int(input())
+                y = int(input())
+                action = (x,y)
     
-    def play(self, print : bool):
-        move = 1
-        state1 = getStateKey(self.board)
-        action1 = self.agent.getAction(state1, False)
+            move += 1
 
-        while True:
-            
             # execute oldAction, observe reward and state
-            self.board[action1[0]][action1[1]] = 'O'
-            
-            move += 1
-            if print:
-                printBoard(getStateKey(self.board), move)
+            self.board[action[0]][action[1]] = 'O' if playerNum == 1 else 'X'
 
-            check = self.checkForEnd('O')
-            
-            if not check == -1:
-                # game is over. +1 reward if win, 0 if draw
-                reward = check * 1000
-                #print( "Draw" if check == 0 else "Agent1 won" )
-                break
+            check = self.checkForEnd('O' if playerNum == 1 else 'X')
 
-            state2 = getStateKey(self.board)
-            action2 = self.agent2.getAction(state2, False)
-            self.board[action2[0]][action2[1]] = 'X'
-
-            check = self.checkForEnd('X')
-
-            move += 1
-            if print:
-                printBoard(getStateKey(self.board), move)
-
-            if not check == -1:
-                # game is over. -1 reward if lose, 0 if draw
-                reward = -1*check * 1000
-                break
-            else:
-                # game continues. 0 reward
-                reward = 0
             newState = getStateKey(self.board)
 
+            if not check == -1000:
+                if check == 1000:
+                    myReward = check 
+                    opponentReward = -check
+                else:
+                    myReward = 100 if playerNum == 1 else 400
+                    opponentReward = 400 if playerNum == 1 else 100
+                break
+            else:
+                myReward = 0
+                opponentReward = 0
+            
+            
             # update Q-values
-            state1 = newState
-            action1 = self.agent.getAction(state1, False)
+            self.agent.update(state, newState, action, myReward, playerNum)
+            self.agent.update(state, newState, action, opponentReward, opponentNum)
+
+            playerNum, opponentNum = opponentNum, playerNum
 
         # Game over. Perform final update
-        
+        if humam == 1 or humam == 2:
+            printBoard(state, move)
 
-        return reward
+        self.agent.update(newState, None, action, myReward, playerNum)
+        self.agent.update(state, newState, action, myReward, playerNum)
 
-def printBoard(board, move):
+        self.agent.update(newState, None, action, opponentReward, opponentNum)
+        self.agent.update(state, newState, action, opponentReward, opponentNum)
+
+        return myReward, playerNum
+    
+
+def printBoard(board, move = 0):
     """
     Prints the game board as text output to the terminal.
 
@@ -171,14 +123,13 @@ def printBoard(board, move):
     board : list of lists
         the current game board
     """
-    print(f" Jogada {int( move/2 )} do jogador {move%2 + 1}")
+    print(f" Jogada {int( move/2 ) + 1} do jogador {move%2} : '{'O' if move%2 == 1 else 'X'}'")
     print('    0   1   2\n')
     for i in range(3):
         print('%i   ' % i, end='')
         for elt in range(3):
             print('%s   ' % board[i * 3 + elt], end='')
         print('\n')
-    print()
     print()
 
 def getStateKey(board):
