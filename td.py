@@ -54,13 +54,8 @@ class TD:
                 if self.Q[playerNum][newState] == max(values):
                     ix_max.append(i)
 
-            if len(ix_max) > 1:
-                # If multiple actions were max, then sample from them
-                index = random.randint(0, len(ix_max) - 1)
-                ix_select = ix_max[index]
-            else:
-                # If unique max action, select that one
-                ix_select = ix_max[0]
+            # If multiple actions were max, then sample from them
+            ix_select = ix_max[random.randint(0, len(ix_max) - 1)]
 
             action = possibleActions[ix_select]
         

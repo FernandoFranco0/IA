@@ -27,19 +27,19 @@ def play( games : int, agente : Q2,  human ):
     print()
 
 # training
-agente = Q2( 0.1, 1, 1 )
+agente = Q2( 0.001, 1, 1 )
 
 tdAgent = TD( 0.1, 1,1 )
   
 print(f"a1 : alpha : {agente.alpha} gamma : {agente.gamma} epsilon : {agente.eps}")
 
-play( 300000, tdAgent, 3 )
+play( 100000, agente, 3 )
 
 
 # playinh
-tdAgent.eps = 0
+agente.eps = 0
 
-play( 100000, tdAgent, 3 )
+play( 1000, agente, 3 )
 
 
 

@@ -37,21 +37,9 @@ class Q2:
             values = [self.Q[playerNum][state][a] for a in possibleActions]
             # Find location of max
 
-            ix_max = []
+            ix_max = [a for a in possibleActions if self.Q[playerNum][state][a] == max(values)  ]
 
-            for i in range( len(possibleActions) ):
-                if self.Q[playerNum][state][possibleActions[i]] == max(values):
-                    ix_max.append(i)
-
-            if len(ix_max) > 1:
-                # If multiple actions were max, then sample from them
-                index = random.randint(0, len(ix_max) - 1)
-                ix_select = ix_max[index]
-            else:
-                # If unique max action, select that one
-                ix_select = ix_max[0]
-
-            action = possibleActions[ix_select]
+            action = ix_max[random.randint(0, len(ix_max) - 1)]
         
         if p:
             print(self.Q[state])
@@ -61,21 +49,22 @@ class Q2:
         """
         Perform the Q-Learning update of Q values.
         """
-        # Update Q(s,a)
-        if newState is not None:
 
-            if oldState not in self.Q[playerNum]:
+        if oldState not in self.Q[playerNum]:
                 possibleActions = [a for a in self.actions if oldState[a[0]*3 + a[1]] == '-']
                 self.Q[playerNum][oldState] = {}
                 for act in possibleActions:
                     self.Q[playerNum][oldState][act] = 0
+
+        
+        # Update Q(s,a)
+        if newState is not None:
 
             if newState not in self.Q[playerNum]:
                 possibleActions = [a for a in self.actions if newState[a[0]*3 + a[1]] == '-']
                 self.Q[playerNum][newState] = {}
                 for act in possibleActions:
                     self.Q[playerNum][newState][act] = 0
-
 
             possibleActions = [a for a in self.actions if newState[a[0]*3 + a[1]] == '-']
             QValues = [self.Q[playerNum][newState][act] for act in possibleActions]
