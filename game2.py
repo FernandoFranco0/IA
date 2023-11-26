@@ -3,21 +3,12 @@ import random
 from q2 import Q2
 
 class Game:
-    def __init__(self, agent : Q2):
-        self.agent = agent
+    def __init__(self, agent, agent2):
+        self.agentPair = (agent,agent2)
         # initialize the game board
         self.board = [['-', '-', '-'], ['-', '-', '-'], ['-', '-', '-']]
 
     def checkForWin(self, key):
-        """
-        Check to see whether the player/agent with token 'key' has won.
-        Returns a boolean holding truth value.
-
-        Parameters
-        ----------
-        key : string
-            token of most recent player. Either 'O' or 'X'
-        """
         # check for player win on diagonals
         a = [self.board[0][0], self.board[1][1], self.board[2][2]]
         b = [self.board[0][2], self.board[1][1], self.board[2][0]]
@@ -40,16 +31,6 @@ class Game:
         return draw
 
     def checkForEnd(self, key : str):
-        """
-        Checks if player/agent with token 'key' has ended the game. Returns -1
-        if the game is still going, 0 if it is a draw, and 1 if the player/agent
-        has won.
-
-        Parameters
-        ----------
-        key : string
-            token of most recent player. Either 'O' or 'X'
-        """
         if self.checkForWin(key):
             return 1000
         elif self.checkForDraw():
@@ -66,7 +47,7 @@ class Game:
 
             state = getStateKey(self.board)
             if playerNum != humam:
-                action = self.agent.getAction(state, playerNum)
+                action = self.agentPair[playerNum-1].getAction(state, playerNum)
             else:
                 printBoard(state, move)
                 x = int(input())
@@ -96,8 +77,12 @@ class Game:
             
             
             # update Q-values
-            self.agent.update(state, newState, action, myReward, playerNum)
-            self.agent.update(state, newState, action, opponentReward, opponentNum)
+            self.agentPair[0].update(state, newState, action, myReward, playerNum)
+            self.agentPair[0].update(state, newState, action, opponentReward, opponentNum)
+
+            if type(self.agentPair[0]).__name__ != type(self.agentPair[1]).__name__:
+                self.agentPair[1].update(state, newState, action, myReward, playerNum)
+                self.agentPair[1].update(state, newState, action, opponentReward, opponentNum)
 
             playerNum, opponentNum = opponentNum, playerNum
 
@@ -105,11 +90,18 @@ class Game:
         if humam == 1 or humam == 2:
             printBoard(state, move)
 
-        self.agent.update(newState, None, action, myReward, playerNum)
-        self.agent.update(state, newState, action, myReward, playerNum)
+        self.agentPair[0].update(newState, None, action, myReward, playerNum)
+        self.agentPair[0].update(state, newState, action, myReward, playerNum)
 
-        self.agent.update(newState, None, action, opponentReward, opponentNum)
-        self.agent.update(state, newState, action, opponentReward, opponentNum)
+        self.agentPair[0].update(newState, None, action, opponentReward, opponentNum)
+        self.agentPair[0].update(state, newState, action, opponentReward, opponentNum)
+        
+        if type(self.agentPair[0]).__name__ != type(self.agentPair[1]).__name__:
+            self.agentPair[1].update(newState, None, action, myReward, playerNum)
+            self.agentPair[1].update(state, newState, action, myReward, playerNum)
+
+            self.agentPair[1].update(newState, None, action, opponentReward, opponentNum)
+            self.agentPair[1].update(state, newState, action, opponentReward, opponentNum)
 
         return myReward, playerNum
     

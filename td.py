@@ -32,7 +32,7 @@ class TD:
             action = possibleActions[random.randint(0,len(possibleActions)-1)]
         else:
             # Greedy choose.
-            values = []
+            max = -1000000
             for a in possibleActions:
                 l = list ( state )
                 l[a[0]*3 + a[1]] = "O" if playerNum == 1 else "X"
@@ -40,24 +40,10 @@ class TD:
 
                 if newState not in self.Q[playerNum]:
                     self.Q[playerNum][newState] = 0
-                values.append(self.Q[playerNum][newState])
-
-            # Find location of max
-
-            ix_max = []
-
-            for i in range( len(possibleActions) ):
-                l = list ( state )
-                l[possibleActions[i][0]*3 + possibleActions[i][1]] = "O" if playerNum == 1 else "X"
-                newState = ''.join( l )
-                
-                if self.Q[playerNum][newState] == max(values):
-                    ix_max.append(i)
-
-            # If multiple actions were max, then sample from them
-            ix_select = ix_max[random.randint(0, len(ix_max) - 1)]
-
-            action = possibleActions[ix_select]
+                value = self.Q[playerNum][newState]
+                if value > max:
+                    max = self.Q[playerNum][newState]
+                    action = a
         
         if p:
             print(self.Q[state])
