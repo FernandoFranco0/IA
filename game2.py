@@ -88,7 +88,7 @@ class Game:
 
         # Game over. Perform final update
         if humam == 1 or humam == 2:
-            printBoard(state, move)
+            printBoard(getStateKey(self.board), move)
 
         self.agentPair[0].update(newState, None, action, myReward, playerNum)
         self.agentPair[0].update(state, newState, action, myReward, playerNum)
