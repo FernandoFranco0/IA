@@ -1,6 +1,6 @@
 import random
 
-from q2 import Q2
+from q import Q
 
 class Game:
     def __init__(self, agent, agent2):
