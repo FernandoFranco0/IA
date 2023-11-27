@@ -170,7 +170,7 @@ def CompareSame( games, type, step =0.1 ):
     processes = []
     end = 11 
     if type == "MN":
-        end = 2
+        end = 10
     for i in range( 1, end ):
         fileName = f"C:/Users/Fernando Franco/Desktop/Comparações{type}{i}.csv"
         with open(fileName, 'w', encoding='utf-8') as file:
@@ -282,22 +282,25 @@ def playAgainst( games, agente, agente2 ):
     print(f"{begin}  {middle}Partidas : {games}, Partidas Vencidas por 1 : {a1}, Partidas Vencidas por 2 : {a2}, Empates : {d}\n")
     
 if __name__ == '__main__': 
+    # ---Usam todos os cores do pc cuidado para não crashar---
     #Compare(10)
     #CompareSame(50000, "Q")
     #CompareSame(50000, "MN")
     #CompareSame(50000, "TD")
+    # ---------------------------------------------------------
 
     # alpha = 0.1, gamma = 1, eps = 1
     #
     agente = Minimax( 9 )
     agente2 = Q( 0.1, 1 , 1 )
-
+    agente3 = TD( 0.1, 1 , 1 )
     playAgainst( 10000, agente, agente2)
+    playAgainst( 10000, agente, agente3)
 
-    # agente.eps = 0
     agente2.eps = 0
-    playAgainst( 100, agente, agente2)
-    playAgainst( 100, agente2, agente)
+    agente3.eps = 0
+    playAgainst( 1000, agente2, agente3)
+    playAgainst( 1000, agente3, agente2)
 
     # with open(f"TD {agente.alpha} {agente.gamma} 1", "wb") as output_file:
     #     pickle.dump(agente.Q, output_file)
