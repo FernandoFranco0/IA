@@ -54,7 +54,7 @@ class Minimax:
                 else:
                     value, _ = self.minimax(newState, depth-1, 2 if playerNum == 1 else 1, not isMaximizing)
 
-                if value >= max:
+                if value > max:
                     max = value
                     action = a
         else:
@@ -71,7 +71,7 @@ class Minimax:
                     value = 1
                 else:
                     value, _ = self.minimax(newState, depth-1, 2 if playerNum == 1 else 1, not isMaximizing)
-                if value <= max:
+                if value < max:
                     max = value
                     action = a
 

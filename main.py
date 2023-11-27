@@ -250,7 +250,7 @@ def CompareAgainst( games, type, type2, step = 0.1 ):
 def compAgainst( i, type, type2, fileName, step, games ):
     pass
 
-def playAgainst( games, agente, agente2, train ):
+def playAgainst( games, agente, agente2 ):
     a1 = 0
     a2 = 0
     d = 0
@@ -269,18 +269,17 @@ def playAgainst( games, agente, agente2, train ):
     
     print()
 
-    if not train:
-        if type(agente).__name__ == "Minimax":
-            begin = f"Profundidade : {agente.depth} "
-        else:
-            begin = f"Alpha : {agente.alpha}, Gamma : {agente.gamma}, Epsilon : {agente.eps} "
+    if type(agente).__name__ == "Minimax":
+        begin = f"Profundidade : {agente.depth} "
+    else:
+        begin = f"Alpha : {agente.alpha}, Gamma : {agente.gamma}, Epsilon : {agente.eps} "
 
-        if type(agente2).__name__ == "Minimax":
-            middle = f"Profundidade : {agente2.depth} "
-        else:
-            middle = f"Alpha : {agente2.alpha}, Gamma : {agente2.gamma}, Epsilon : {agente2.eps} "
+    if type(agente2).__name__ == "Minimax":
+        middle = f"Profundidade : {agente2.depth} "
+    else:
+        middle = f"Alpha : {agente2.alpha}, Gamma : {agente2.gamma}, Epsilon : {agente2.eps} "
 
-        print(f"{begin}  {middle}Partidas : {games}, Partidas Vencidas por 1 : {a1}, Partidas Vencidas por 2 : {a2}, Empates : {d}\n")
+    print(f"{begin}  {middle}Partidas : {games}, Partidas Vencidas por 1 : {a1}, Partidas Vencidas por 2 : {a2}, Empates : {d}\n")
     
 if __name__ == '__main__': 
     #Compare(10)
@@ -290,15 +289,15 @@ if __name__ == '__main__':
 
     # alpha = 0.1, gamma = 1, eps = 1
     #
-    agente = TD( 0.1, 1 , 1 )
+    agente = Minimax( 9 )
     agente2 = Q( 0.1, 1 , 1 )
 
-    playAgainst( 10000, agente, agente2, True)
+    playAgainst( 10000, agente, agente2)
 
-    agente.eps = 0
+    # agente.eps = 0
     agente2.eps = 0
-    playAgainst( 100, agente, agente2, False)
-    playAgainst( 100, agente2, agente, False)
+    playAgainst( 100, agente, agente2)
+    playAgainst( 100, agente2, agente)
 
     # with open(f"TD {agente.alpha} {agente.gamma} 1", "wb") as output_file:
     #     pickle.dump(agente.Q, output_file)
