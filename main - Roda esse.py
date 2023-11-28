@@ -23,7 +23,7 @@ def Compare( games, type = "all", type2 = "all", step = 0.1):
             if t == "MN":
                 end = 2
             for i in range( 1, end ):
-                fileName = f"C:/Users/Fernando Franco/Desktop/Comparações{t}{t2}{i}.csv"
+                fileName = f"./Comparações{t}{t2}{i}.csv"
                 with open(fileName, 'w', encoding='utf-8') as file:
                     file.write(f"Agente 1, {t}, Agente 2, {t2}\n")
                     begin = "Alpha 1, Gamma 1, Epsilon 1, "
