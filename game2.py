@@ -51,6 +51,7 @@ class Game:
             if playerNum != humam:
                 action = self.agentPair[playerNum-1].getAction(state, playerNum)
             else:
+                print("Nao e checado se a sua jogada e valida, i.e. se a casa esta vazia")
                 print("Digite a linha da sua jogada em um linha e a coluna da sua jogada em outra: ")
                 x = int(input())
                 y = int(input())
