@@ -5,7 +5,7 @@ from q import Q
 from td import TD
 import multiprocessing 
 import pickle
-
+#Testa todas as combinações de valores de alpha, gamma e epsilon para dois agentes
 def Compare( games, type = "all", type2 = "all", step = 0.1):
     start_time = time.time()
 
@@ -42,7 +42,7 @@ def Compare( games, type = "all", type2 = "all", step = 0.1):
         process.join()
 
     print("--- %s seconds ---" % (time.time() - start_time))
-
+#Chamada por compare
 def compMp( i, type, type2, fileName, step, games ):
 
     if type == "TD":
@@ -126,6 +126,7 @@ def compMp( i, type, type2, fileName, step, games ):
     
     print(f"Finalizado {type} contra {type2} i = {i}!")
 
+#Realiza o Jogo e escreve no arquivo
 def play( games : int, agente, agente2,  human, fileName ):
     a1 = 0
     a2 = 0
@@ -164,7 +165,8 @@ def play( games : int, agente, agente2,  human, fileName ):
             middle = f'"{alpha2}","{gamma2}","{eps2}"'
 
         file.write( f'{begin},{middle},{games},{a1},{a2},{d}\n')
-    
+
+#testa todas as combinações de valores de alpha, gamma e epsilon para um agente contra ele mesmo
 def CompareSame( games, type, step =0.1 ):
     start_time = time.time()
     processes = []
@@ -193,6 +195,8 @@ def CompareSame( games, type, step =0.1 ):
         process.join()
     
     print("--- %s seconds ---" % (time.time() - start_time))
+
+#Chamada por CompareSame
 def compSame( i, type, fileName, step, games ):
     if type == "TD":
         agente = TD( 0, 0, 0 )
@@ -221,35 +225,7 @@ def compSame( i, type, fileName, step, games ):
 
     print(f"Finalizado {type} i = {i}!")
 
-def CompareAgainst( games, type, type2, step = 0.1 ):
-    start_time = time.time()
-    processes = []
-    types = ["TD", "Q", "MN"]
-    types2 = ["TD", "Q", "MN"]
-
-    if type != "all":
-        types = [type]
-    if type2 != "all":
-        types2 = [type2]
-        
-    for t in types:
-        for t2 in types2:
-            end = 11 
-            if t == "MN":
-                end = 2
-            for i in range( 1, end ):
-                p = multiprocessing.Process(target=compAgainst, args=(i, t, t2, fileName, step, games,))
-                processes.append(p)
-                p.start()
-
-    for process in processes:
-        process.join()
-    
-    print("--- %s seconds ---" % (time.time() - start_time))
-
-def compAgainst( i, type, type2, fileName, step, games ):
-    pass
-
+#Joga contra um agente sem escrever em arquivo
 def playAgainst( games, agente, agente2, human = 3, train = False ):
     a1 = 0
     a2 = 0
@@ -291,18 +267,67 @@ if __name__ == '__main__':
 
     # alpha = 0.1, gamma = 1, eps = 1
     #
+
     agente = Minimax( 9 )
     agente2 = Q( 0.1, 1 , 1 )
     agente3 = TD( 0.1, 1 , 1 )
-    playAgainst( 1, agente, agente2)
-    playAgainst( 1, agente, agente3)
 
-    agente2.eps = 0
-    agente3.eps = 0
-    
-    
+
+    default = int( input("Usar valores padrão (alpha = 0.1, gamma = 1, eps = 1, prof = 9)? 1 - Sim, 2 - Nao\n") )
+
+    if default == 2:
+        alpha = float( input("valor do alpha Q\n") )
+        gamma = float( input("valor do gamma Q\n") )
+        eps = float( input("valor do eps Q\n") )
+        agente2.alpha = alpha
+        agente2.gamma = gamma
+        agente2.eps = eps
+
+        alpha = float( input("valor do alpha TD\n") )
+        gamma = float( input("valor do gamma TD\n") )
+        eps = float( input("valor do eps TD\n") )
+        agente3.alpha = alpha
+        agente3.gamma = gamma
+        agente3.eps = eps
+
+        prof = int( input("valor da profundidade\n") )
+        agente.depth = prof
+
     while True:
-        against = int( input("Contra quem quer jogar contra? 1 - Q, 2 - TD, 3-Mini\n") )
+        train = int( input("Treinar? 1 - Sim, 2 - Nao\n") )
+        if train == 2:
+            break
+        amount = int( input("Quantas partidas?\n") )
+        player1 = int( input("primeiro jogador? 1 - Q, 2 - TD, 3 - Mini\n") )
+        player2 = int( input("segundo jogador? 1 - Q, 2 - TD, 3 - Mini\n") )
+
+        if player1 == 1:
+            p1 = agente3
+        elif player1 == 2:
+            p1 = agente2
+        elif player1 == 3:
+            p1 = agente
+        else:
+            p1 = agente2
+
+        if player2 == 1:
+            p2 = agente3
+        elif player2 == 2: 
+            p2 = agente2
+        elif player2 == 3:
+            p2 = agente
+        else:
+            p2 = agente
+
+        playAgainst( amount, p1, p2)
+
+    best = int( input("Fazer sempre melhor jogada? 1 - Sim, 2 - Nao\n") )
+    if best == 1:
+        agente2.eps = 0
+        agente3.eps = 0
+        
+    while True:
+        against = int( input("Contra quem quer jogar contra? 1 - Q, 2 - TD, 3 - Mini\n") )
         pos = int( input("Quem começa? 1 - Voce, 2 - IA\n") )
 
         if against == 1:
@@ -315,6 +340,3 @@ if __name__ == '__main__':
         again = int( input("De novo? 1 - Sim, 2 - Nao\n") )
         if again == 2:
             break
-
-    # with open(f"TD {agente.alpha} {agente.gamma} 1", "wb") as output_file:
-    #     pickle.dump(agente.Q, output_file)
