@@ -4,7 +4,6 @@ from minimax import Minimax
 from q import Q
 from td import TD
 import multiprocessing 
-import pickle
 #Testa todas as combinações de valores de alpha, gamma e epsilon para dois agentes
 def Compare( games, type = "all", type2 = "all", step = 0.1):
     start_time = time.time()
