@@ -257,18 +257,8 @@ def playAgainst( games, agente, agente2, human = 3, train = False ):
 
         print(f"{begin}  {middle}Partidas : {games}, Partidas Vencidas por 1 : {a1}, Partidas Vencidas por 2 : {a2}, Empates : {d}\n")
     
-if __name__ == '__main__': 
-    # ---Usam todos os cores do pc cuidado para não crashar---
-    # Escreve em arquivos
-    #Compare(10)
-    #CompareSame(50000, "Q")
-    #CompareSame(50000, "MN")
-    #CompareSame(50000, "TD")
-    # ---------------------------------------------------------
 
-    # alpha = 0.1, gamma = 1, eps = 1
-    #
-
+def game():
     agente = Minimax( 9 )
     agente2 = Q( 0.1, 1 , 1 )
     agente3 = TD( 0.1, 1 , 1 )
@@ -360,3 +350,17 @@ if __name__ == '__main__':
         again = int( input("De novo? 1 - Sim, 2 - Nao\n") )
         if again == 2:
             break
+
+if __name__ == '__main__': 
+    # ---Usam todos os cores do pc cuidado para não crashar---
+    # Escreve em arquivos
+    #Compare(10)
+    #CompareSame(50000, "Q")
+    #CompareSame(50000, "MN")
+    #CompareSame(50000, "TD")
+    # ---------------------------------------------------------
+
+    # alpha = 0.1, gamma = 1, eps = 1
+    #
+
+    game()
