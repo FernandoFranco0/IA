@@ -37,31 +37,35 @@ class Game:
             return 0
         return -1000
 
-    def training(self, humam):
+    def training(self, humam, p = False):
         playerNum = 1
         opponentNum = 2
         move = 1
+        if p:
+            printBoard(getState(self.board), move)
 
-        # iterate until game is over
         while True:
 
-            state = getStateKey(self.board)
+            state = getState(self.board)
+            
             if playerNum != humam:
                 action = self.agentPair[playerNum-1].getAction(state, playerNum)
             else:
-                printBoard(state, move)
+                print("Digite a linha da sua jogada em um linha e a coluna da sua jogada em outra: ")
                 x = int(input())
                 y = int(input())
                 action = (x,y)
-    
+            
             move += 1
 
-            # execute oldAction, observe reward and state
             self.board[action[0]][action[1]] = 'O' if playerNum == 1 else 'X'
 
             check = self.checkForEnd('O' if playerNum == 1 else 'X')
 
-            newState = getStateKey(self.board)
+            newState = getState(self.board)
+
+            if p:
+                printBoard(newState, move)                
 
             if not check == -1000:
                 if check == 1000:
@@ -75,8 +79,6 @@ class Game:
                 myReward = 0
                 opponentReward = 0
             
-            
-            # update Q-values
             self.agentPair[0].update(state, newState, action, myReward, playerNum)
             self.agentPair[0].update(state, newState, action, opponentReward, opponentNum)
 
@@ -86,9 +88,8 @@ class Game:
 
             playerNum, opponentNum = opponentNum, playerNum
 
-        # Game over. Perform final update
-        if humam == 1 or humam == 2:
-            printBoard(getStateKey(self.board), move)
+        if p:
+            printBoard(getState(self.board), move)
 
         self.agentPair[0].update(newState, None, action, myReward, playerNum)
         self.agentPair[0].update(state, newState, action, myReward, playerNum)
@@ -107,33 +108,16 @@ class Game:
     
 
 def printBoard(board, move = 0):
-    """
-    Prints the game board as text output to the terminal.
-
-    Parameters
-    ----------
-    board : list of lists
-        the current game board
-    """
-    print(f" Jogada {int( move/2 ) + 1} do jogador {move%2} : '{'O' if move%2 == 1 else 'X'}'")
+    print()
     print('    0   1   2\n')
     for i in range(3):
         print('%i   ' % i, end='')
         for elt in range(3):
             print('%s   ' % board[i * 3 + elt], end='')
         print('\n')
-    print()
+    print(f" Jogada {int( (move+1)/2 )} do jogador {2 - move%2} : '{'O' if move%2 == 1 else 'X'}'")
 
-def getStateKey(board):
-    """
-    Converts 2D list representing the board state into a string key
-    for that state. Keys are used for Q-value hashing.
-
-    Parameters
-    ----------
-    board : list of lists
-        the current game board
-    """
+def getState(board):
     key = ''
     for row in board:
         for elt in row:

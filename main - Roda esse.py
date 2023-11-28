@@ -174,7 +174,7 @@ def CompareSame( games, type, step =0.1 ):
     if type == "MN":
         end = 10
     for i in range( 1, end ):
-        fileName = f"C:/Users/Fernando Franco/Desktop/Comparações{type}{i}.csv"
+        fileName = f"./Comparações{type}{i}.csv"
         with open(fileName, 'w', encoding='utf-8') as file:
             file.write(f"Agente 1, {type}, Agente 2, {type}\n")
             begin = "Alpha 1, Gamma 1, Epsilon 1, "
@@ -235,7 +235,7 @@ def playAgainst( games, agente, agente2, human = 3, train = False ):
         game = Game( agente, agente2)
         if i % 50 == 0:
             print(f"Partida {i}")
-        result,player = game.training( human )
+        result,player = game.training( human, train )
         if result == 100 or result == 400:
             d += 1
         elif result == 1000 and player == 1:
@@ -259,6 +259,7 @@ def playAgainst( games, agente, agente2, human = 3, train = False ):
     
 if __name__ == '__main__': 
     # ---Usam todos os cores do pc cuidado para não crashar---
+    # Escreve em arquivos
     #Compare(10)
     #CompareSame(50000, "Q")
     #CompareSame(50000, "MN")
@@ -301,22 +302,21 @@ if __name__ == '__main__':
         player1 = int( input("primeiro jogador? 1 - Q, 2 - TD, 3 - Mini\n") )
         player2 = int( input("segundo jogador? 1 - Q, 2 - TD, 3 - Mini\n") )
 
+        p1 = agente2
         if player1 == 1:
             p1 = agente3
         elif player1 == 2:
             p1 = agente2
         elif player1 == 3:
             p1 = agente
-        else:
-            p1 = agente2
 
+
+        p2 = agente
         if player2 == 1:
             p2 = agente3
         elif player2 == 2: 
             p2 = agente2
         elif player2 == 3:
-            p2 = agente
-        else:
             p2 = agente
 
         playAgainst( amount, p1, p2)
@@ -327,16 +327,36 @@ if __name__ == '__main__':
         agente3.eps = 0
         
     while True:
-        against = int( input("Contra quem quer jogar contra? 1 - Q, 2 - TD, 3 - Mini\n") )
-        pos = int( input("Quem começa? 1 - Voce, 2 - IA\n") )
+        player1 = int( input("Jogador 1? 1 - Voce, 2 - Q, 3 - TD, 4 - Mini\n") )
+        player2 = int( input("Jogador 2? 1 - Voce, 2 - Q, 3 - TD, 4 - Mini ( Jogar contra si mesmo não funciona)\n") )
 
-        if against == 1:
-            playAgainst( 1, agente2, agente2, pos, True)
-        elif against == 2:
-            playAgainst( 1, agente3, agente3, pos, True)
-        else:
-            playAgainst( 1, agente, agente, pos, True)
+        pos = 3
+        p1 = agente2
 
+        if player1 == 1:
+            pos = 1
+        elif player1 == 2:
+            p1 = agente2
+        elif player1 == 3:
+            p1 = agente3
+        elif player1 == 4:
+            p1 = agente          
+
+
+        p2 = agente
+        if player2 == 1:
+            pos = 2
+        elif player2 == 2: 
+            p2 = agente2
+        elif player2 == 3:
+            p2 = agente3
+        elif player1 == 4:
+            p2 = agente
+            
+
+        amount = int( input("Quantas partidas?\n") )
+        playAgainst( amount, p1, p2, pos, True)
+            
         again = int( input("De novo? 1 - Sim, 2 - Nao\n") )
         if again == 2:
             break
