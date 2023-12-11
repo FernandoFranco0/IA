@@ -291,7 +291,7 @@ if __name__ == '__main__':
 
     # alpha = 0.1, gamma = 1, eps = 1
     #
-    agente = Minimax( 9 )
+    agente = Minimax( 6 )
     agente2 = Q( 0.1, 1 , 1 )
     agente3 = TD( 0.1, 1 , 1 )
     playAgainst( 10000, agente, agente2)
